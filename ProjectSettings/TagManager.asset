@@ -5,6 +5,9 @@ TagManager:
   serializedVersion: 2
   tags:
   - Fire
+  - finish
+  - PlayerCar
+  - EnemyCar
   layers:
   - Default
   - TransparentFX
@@ -13,10 +16,10 @@ TagManager:
   - Water
   - UI
   - Enemy
-  - 
-  - 
-  - 
-  - 
+  - Character
+  - Destination
+  - Track
+  - Obstacle
   - 
   - 
   - 

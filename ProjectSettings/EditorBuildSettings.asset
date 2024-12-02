@@ -4,5 +4,11 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 1
+    path: Assets/Scenes/GamePlay/MainMenu.unity
+    guid: 29ffe72483846444a8eef52eca5afda8
+  - enabled: 1
+    path: Assets/Scenes/GamePlay/RaceCar.unity
+    guid: d725f6f76672d0742b1d744d8714659c
   m_configObjects: {}

@@ -1,5 +1,7 @@
 using UnityEngine;
 
+
+
 public class AICarScript : MonoBehaviour
 {
     public Transform pathGroup;          // Objek grup path
@@ -28,6 +30,7 @@ public class AICarScript : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         GetWaypoints();                  // Ambil titik-titik jalur dari pathGroup
         targetSpeed = maxSpeed;          // Inisialisasi targetSpeed ke maxSpeed
+
     }
 
     void FixedUpdate()
