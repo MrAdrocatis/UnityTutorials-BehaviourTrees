@@ -3,63 +3,49 @@ using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
-    public CarFSM playerCarFSM;
-    public CarFSM enemyCarFSM;
-    public Transform commonTarget;
+    public CarFSM playerCarFSM; // FSM for player car
+    public CarFSM enemyCarFSM;  // FSM for enemy car
+    public Transform commonTarget; // Target for navigation
 
-    public GameObject winUI;
-    public GameObject loseUI;
-    public GameObject gameOverPanel;
+    public GameObject winUI;        // Win UI
+    public GameObject loseUI;       // Lose UI
+    public GameObject gameOverPanel; // Game over panel
 
-    private bool gameFinished = false;
+    private bool gameFinished = false; // Game finished status
 
     private void Start()
     {
+        // Set Time.timeScale to 0 at start to prevent cars from moving immediately
+        Time.timeScale = 0;
+
+        // Set target navigation for all cars
         if (playerCarFSM != null)
         {
-            playerCarFSM.SetTarget(commonTarget);
+            // If your car has NavMesh or Steering, ensure the FSM initializes properly
+            // playerCarFSM.SetTarget(commonTarget); // Removed transition AI usage
             Debug.Log("Player car's target set.");
         }
 
         if (enemyCarFSM != null)
         {
-            enemyCarFSM.SetTarget(commonTarget);
+            // Same for enemy car
+            // enemyCarFSM.SetTarget(commonTarget); // Removed transition AI usage
             Debug.Log("Enemy car's target set.");
         }
     }
 
-    public void SwitchToSteeringMode()
-    {
-        if (playerCarFSM != null)
-        {
-            playerCarFSM.SwitchState(CarFSM.State.Steering);
-            Debug.Log("Player car switched to Steering mode.");
-        }
-
-        if (enemyCarFSM != null)
-        {
-            enemyCarFSM.SwitchState(CarFSM.State.Steering);
-            Debug.Log("Enemy car switched to Steering mode.");
-        }
-
-        Debug.Log("Switched all cars to Steering Behavior.");
-    }
-
     public void SwitchToNavMeshMode()
     {
-        if (playerCarFSM != null)
-        {
-            playerCarFSM.SwitchState(CarFSM.State.Navigating);
-            Debug.Log("Player car switched to NavMesh mode.");
-        }
-
-        if (enemyCarFSM != null)
-        {
-            enemyCarFSM.SwitchState(CarFSM.State.Navigating);
-            Debug.Log("Enemy car switched to NavMesh mode.");
-        }
-
+        if (playerCarFSM != null) playerCarFSM.SwitchState(CarFSM.State.Navigating);
+        if (enemyCarFSM != null) enemyCarFSM.SwitchState(CarFSM.State.Navigating);
         Debug.Log("Switched all cars to NavMesh Navigation.");
+    }
+
+    public void SwitchToSteeringMode()
+    {
+        if (playerCarFSM != null) playerCarFSM.SwitchState(CarFSM.State.Idle); // Assuming Player 2 uses Steering
+        if (enemyCarFSM != null) enemyCarFSM.SwitchState(CarFSM.State.Idle); // Assuming Player 2 uses Steering
+        Debug.Log("Switched all cars to Steering mode.");
     }
 
     public void CheckWinner(string carName)
@@ -100,5 +86,12 @@ public class GameManager : MonoBehaviour
     {
         SceneManager.LoadScene("MainMenu");
         Debug.Log("Returning to main menu...");
+    }
+
+    // Function to start the game, can be triggered by a button
+    public void StartGame()
+    {
+        Time.timeScale = 1; // Resume game when start is pressed
+        Debug.Log("Game started!");
     }
 }

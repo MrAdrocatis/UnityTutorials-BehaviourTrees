@@ -3,9 +3,8 @@ using UnityEngine.AI;
 
 public class AINavigation2 : MonoBehaviour
 {
-    public string targetTag = "Finish"; // Tag tujuan navigasi
-    private NavMeshAgent agent;         // Komponen NavMeshAgent
-    private Transform destination;      // Transform tujuan
+    public Transform destination; // Tujuan navigasi
+    private NavMeshAgent agent;   // Komponen NavMeshAgent
 
     private void Awake()
     {

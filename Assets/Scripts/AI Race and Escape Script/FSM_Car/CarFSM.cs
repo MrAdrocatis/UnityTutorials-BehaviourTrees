@@ -2,149 +2,81 @@ using UnityEngine;
 
 public class CarFSM : MonoBehaviour
 {
-    public enum State { Idle, Steering, Navigating, Finished }
-    public State currentState = State.Idle;
-
-    public Transform target; // Target navigasi
-    private Rigidbody rb;
-    private NavMeshController navMeshController;
-    private SteeringController steeringController;
-
-    private void Awake()
+    public enum State
     {
-        rb = GetComponent<Rigidbody>();
-        navMeshController = GetComponent<NavMeshController>();
-        steeringController = GetComponent<SteeringController>();
-
-        if (rb == null || navMeshController == null || steeringController == null)
-        {
-            Debug.LogError($"{gameObject.name} requires Rigidbody, NavMeshController, and SteeringController components!");
-        }
+        Idle,
+        Navigating,
+        Finished
     }
+
+    private State currentState;
+    private AICarScript aiCarScript;  // Ganti dengan komponen yang sesuai jika perlu
+    private AINavigation2 aiNavigation; // Ganti dengan komponen yang sesuai jika perlu
 
     private void Start()
     {
-        SwitchState(State.Idle);
-    }
+        aiCarScript = GetComponent<AICarScript>();  // Mengambil AICarScript
+        aiNavigation = GetComponent<AINavigation2>(); // Mengambil AINavigation2
 
-    public void SetTarget(Transform newTarget)
-    {
-        target = newTarget;
-
-        if (currentState == State.Navigating && navMeshController != null)
+        if (aiCarScript == null || aiNavigation == null)
         {
-            navMeshController.SetTarget(target);
-            Debug.Log($"{gameObject.name} target updated for NavMesh navigation.");
+            Debug.LogError("Missing necessary components.");
         }
 
-        if (currentState == State.Steering && steeringController != null)
-        {
-            steeringController.SetTarget(target);
-            Debug.Log($"{gameObject.name} target updated for Steering behavior.");
-        }
+        SwitchState(State.Idle); // Set state awal ke Idle
     }
 
     public void SwitchState(State newState)
     {
-        if (currentState == newState) return;
-
-        DisableAllModes(); // Pastikan semua mode dimatikan sebelum mengganti state
-
         currentState = newState;
+        Debug.Log($"Switched to state: {currentState}");
 
-        switch (newState)
+        switch (currentState)
         {
             case State.Idle:
-                Debug.Log($"{gameObject.name} switched to Idle state.");
-                break;
-
-            case State.Steering:
-                EnableSteeringBehavior();
-                Debug.Log($"{gameObject.name} switched to Steering behavior.");
+                // Aksi saat mobil dalam keadaan idle
+                if (aiNavigation != null)
+                {
+                    aiNavigation.StopNavigation(); // Matikan navigasi jika diperlukan
+                }
                 break;
 
             case State.Navigating:
-                EnableNavMeshNavigation();
-                Debug.Log($"{gameObject.name} switched to NavMesh navigation.");
+                // Aksi saat mobil sedang menavigasi
+                if (aiNavigation != null)
+                {
+                    aiNavigation.SetDestination(aiNavigation.destination); // Atur tujuan navigasi
+                }
                 break;
 
             case State.Finished:
-                DisableAllModes();
-                Debug.Log($"{gameObject.name} switched to Finished state.");
+                // Aksi saat mobil selesai (misalnya mencapai finish line)
+                if (aiCarScript != null)
+                {
+                    Debug.Log("Car reached the finish line.");
+                }
                 break;
         }
     }
 
-    private void EnableSteeringBehavior()
+    public void SetTarget(Transform target)
     {
-        if (rb != null)
+        // Jika menggunakan AINavigation2 atau metode lain untuk mengatur tujuan
+        if (aiNavigation != null)
         {
-            rb.isKinematic = false; // Nonaktifkan mode kinematik untuk Steering
-            rb.velocity = Vector3.zero;
-            rb.angularVelocity = Vector3.zero;
-        }
-
-        if (navMeshController != null)
-        {
-            navMeshController.DisableNavigation();
-        }
-
-        if (steeringController != null)
-        {
-            steeringController.enabled = true;
+            aiNavigation.SetDestination(target);
         }
     }
 
-    private void EnableNavMeshNavigation()
-    {
-        if (rb != null)
-        {
-            rb.isKinematic = true; // Aktifkan mode kinematik untuk NavMesh
-            rb.velocity = Vector3.zero;
-            rb.angularVelocity = Vector3.zero;
-        }
-
-        if (steeringController != null)
-        {
-            steeringController.enabled = false;
-        }
-
-        if (navMeshController != null)
-        {
-            navMeshController.EnableNavigation();
-            navMeshController.SetTarget(target);
-        }
-    }
-
-    private void DisableAllModes()
-    {
-        if (rb != null)
-        {
-            rb.velocity = Vector3.zero;
-            rb.angularVelocity = Vector3.zero;
-        }
-
-        if (steeringController != null)
-        {
-            steeringController.enabled = false;
-        }
-
-        if (navMeshController != null)
-        {
-            navMeshController.DisableNavigation(); // Jangan panggil ResetPath jika NavMeshAgent tidak aktif
-        }
-    }
-
+    // Fungsi untuk menangani finish line
     private void OnTriggerEnter(Collider other)
     {
-        if (currentState != State.Finished && other.CompareTag("Finish"))
+        if (other.CompareTag("Finish"))
         {
-            SwitchState(State.Finished);
-
             GameManager gameManager = FindObjectOfType<GameManager>();
             if (gameManager != null)
             {
-                gameManager.CheckWinner(gameObject.name);
+                gameManager.CheckWinner(gameObject.name); // Periksa pemenang jika mobil mencapai garis finish
             }
         }
     }
