@@ -94,4 +94,22 @@ public class GameManager : MonoBehaviour
         Time.timeScale = 1; // Resume game when start is pressed
         Debug.Log("Game started!");
     }
+
+    public void FastForward()
+    {
+        Time.timeScale = 5; // Resume game when start is pressed
+        Debug.Log("Fast!");
+    }
+
+    public void SuperFast()
+    {
+        Time.timeScale = 20; // Resume game when start is pressed
+        Debug.Log("Fast!");
+    }
+
+    public void NormalSpeed()
+    {
+        Time.timeScale = 1; // Resume game when start is pressed
+        Debug.Log("Slow!");
+    }
 }

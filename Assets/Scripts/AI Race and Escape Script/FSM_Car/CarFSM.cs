@@ -20,7 +20,7 @@ public class CarFSM : MonoBehaviour
 
         if (aiCarScript == null || aiNavigation == null)
         {
-            Debug.LogError("Missing necessary components.");
+            //Debug.LogError("Missing necessary components.");
         }
 
         SwitchState(State.Idle); // Set state awal ke Idle
